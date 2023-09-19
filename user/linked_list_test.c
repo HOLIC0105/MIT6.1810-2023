@@ -2,35 +2,46 @@
 #include "kernel/types.h"
 #include "user/user.h"
 
+void push(int n, char const *msg_prefix) {
+  if (ll_push(n)) {
+    fprintf(2, "%s: push failed\n", msg_prefix);
+    exit(1);
+  }
+}
+
+void pop(int expected, char const *msg_prefix) {
+  int x = ll_pop();
+  if (x != expected) {
+    fprintf(2, "%s: unexpected value from pop: expected %d, got %d\n",
+            msg_prefix, expected, x);
+    exit(1);
+  }
+}
+
 void small_push() {
   for (int i = 0; i < 10; i++) {
-    ll_push(i);
+    push(i, "small_push");
   }
 }
 
 void empty_pop() {
   for (int i = 0; i < 10; i++) {
-    if (ll_pop() != DUMMY_VALUE) {
-      exit(1);
-    }
+    pop(DUMMY_VALUE, "empty_pop");
   }
 }
 
 void many_pushes() {
   for (int i = 0; i < 100; i++) {
-    ll_push(i);
+    push(i, "many_pushes");
   }
 }
 
 void push_and_pop() {
   for (int i = 0; i < 100; i++) {
-    ll_push(i);
+    push(i, "push_and_pop");
   }
   for (int i = 0; i < 100; i++) {
-    int x = ll_pop();
-    if (x != i) {
-      exit(1);
-    }
+    pop(i, "push_and_pop");
   }
 }
 

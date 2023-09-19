@@ -67,7 +67,7 @@ int ll_pop(void) {
   l = l->next;
   // TODO: the bug is here! we set the next pointer of the *current*
   // l to 0 after changing it.
-  l->next = 0;
+  /* l->next = 0; */
   return old->value;
 }
 
