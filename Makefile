@@ -30,7 +30,9 @@ OBJS = \
   $K/sysfile.o \
   $K/kernelvec.o \
   $K/plic.o \
-  $K/virtio_disk.o
+  $K/virtio_disk.o \
+	$K/linked_list.o \
+	$K/syslist.o \
 
 OBJS_KCSAN = \
   $K/start.o \
