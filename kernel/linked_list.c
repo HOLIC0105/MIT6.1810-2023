@@ -2,10 +2,10 @@
 #include "param.h"
 #include "memlayout.h"
 #include "spinlock.h"
-#include "linked_list.h"
 #include "riscv.h"
 #include "proc.h"
 #include "defs.h"
+#include "linked_list.h"
 
 struct link {
   int value;
@@ -19,7 +19,7 @@ char *p;
 struct link *l;
 int live_nodes;
 
-struct link *ll_create() {
+struct link *ll_new() {
   // In this case, we'll say that we have to allocate a page.
   if (base == 0) {
     if ((base = kalloc()) == 0) {
@@ -40,8 +40,10 @@ struct link *ll_create() {
   return ret;
 }
 
+void ll_create() { l = ll_new(); }
+
 int ll_push(int value) {
-  struct link *new = ll_create();
+  struct link *new = ll_new();
   if (new == 0) {
     return -1;
   }
@@ -56,26 +58,17 @@ int ll_push(int value) {
   return 0;
 }
 
-void ll_destroy(struct link *l) {
-  live_nodes--;
-  if (live_nodes == 0) {
-    kfree(base);
-    base = 0;
-  }
-}
-
-int ll_pop(int *ret) {
+int ll_pop(void) {
   if (l == 0) {
     return DUMMY_VALUE;
   }
 
   struct link *old = l;
-  old->next = 0;
   l = l->next;
   // TODO: the bug is here! we set the next pointer of the *current*
   // l to 0 after changing it.
   l->next = 0;
-  ll_destroy(l);
   return old->value;
 }
 
+void ll_destroy(void) { kfree(base); }
