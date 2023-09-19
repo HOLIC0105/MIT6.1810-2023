@@ -185,5 +185,12 @@ void            virtio_disk_init(void);
 void            virtio_disk_rw(struct buf *, int);
 void            virtio_disk_intr(void);
 
+// linked_list.c
+void        ll_init();
+struct link ll_create(int);
+void        ll_push(struct link, int);
+int         ll_pop(struct link, int *);
+void        ll_destroy(struct link);
+
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
