@@ -1,37 +1,53 @@
-// We want to write some code that exposes a mutable linked list
-// We need a way to:
-// - add to the linked list
-// - remove the head of the linked list
-// - create a new linked list
-// - deallocate a linked list
-// We're going to set one arbitrary rule: we can never mutate
-// the linked list in userspace. Maybe this is because we want other
-// processes to be able to reference the same linked list easily?
-#include "kernel/types.h"
 #include "kernel/linked_list.h"
+#include "kernel/types.h"
 #include "user/user.h"
 
-int extend_and_sum(struct link link, int *nums, int len_nums)
-{
-  for (int *p = nums; p < nums + len_nums; p++) {
-    ll_push(link, *p);
+void small_push() {
+  for (int i = 0; i < 10; i++) {
+    ll_push(i);
   }
-
-  int sum = 0;
-  for (struct link *curr = &link; curr->next; curr = curr->next) {
-    sum += curr->value;
-  }
-
-  return sum;
 }
 
-int main()
-{
-  struct link link = ll_create(1);
-  ll_push(link, 1);
-  int x;
-  if (ll_pop(link, &x) < 0) {
-    exit(1);
+void empty_pop() {
+  for (int i = 0; i < 10; i++) {
+    if (ll_pop() != DUMMY_VALUE) {
+      exit(1);
+    }
   }
-  ll_destroy(link);
+}
+
+void many_pushes() {
+  for (int i = 0; i < 100; i++) {
+    ll_push(i);
+  }
+}
+
+void push_and_pop() {
+  for (int i = 0; i < 100; i++) {
+    ll_push(i);
+  }
+  for (int i = 0; i < 100; i++) {
+    int x = ll_pop();
+    if (x != i) {
+      exit(1);
+    }
+  }
+}
+
+void (*tests[])(void) = {
+    small_push,
+    empty_pop,
+    many_pushes,
+    push_and_pop,
+};
+
+int main() {
+  for (int i = 0; i < sizeof(tests) / sizeof(*tests); i++) {
+    ll_create();
+    tests[i]();
+    ll_destroy();
+  }
+
+  printf("ALL TESTS PASSED\n");
+  exit(0);
 }

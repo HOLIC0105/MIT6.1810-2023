@@ -23,10 +23,10 @@ int getpid(void);
 char *sbrk(int);
 int sleep(int);
 int uptime(void);
-struct link ll_init(int);
-void ll_push(struct link *, int);
-int ll_pop(struct link *, int *);
-void ll_destroy(struct link *);
+int ll_create(void);
+int ll_push(int);
+int ll_pop(void);
+int ll_destroy(void);
 
 // ulib.c
 int stat(const char *, struct stat *);
