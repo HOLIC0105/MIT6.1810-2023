@@ -18,31 +18,45 @@ void pop(int expected, char const *msg_prefix) {
   }
 }
 
+void pass(char const *name) { printf("PASSED %s\n", name); }
+
 void small_push() {
+  char const *name = "small_push";
   for (int i = 0; i < 10; i++) {
-    push(i, "small_push");
+    push(i, name);
   }
+
+  pass(name);
 }
 
 void empty_pop() {
+  char const *name = "empty_pop";
   for (int i = 0; i < 10; i++) {
-    pop(DUMMY_VALUE, "empty_pop");
+    pop(DUMMY_VALUE, name);
   }
+
+  pass(name);
 }
 
 void many_pushes() {
+  char const *name = "many_pushes";
   for (int i = 0; i < 100; i++) {
-    push(i, "many_pushes");
+    push(i, name);
   }
+
+  pass(name);
 }
 
 void push_and_pop() {
+  char const *name = "push_and_pop";
   for (int i = 0; i < 100; i++) {
-    push(i, "push_and_pop");
+    push(i, name);
   }
   for (int i = 0; i < 100; i++) {
-    pop(i, "push_and_pop");
+    pop(i, name);
   }
+
+  pass(name);
 }
 
 void (*tests[])(void) = {
