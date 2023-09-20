@@ -17,35 +17,27 @@ char *base;
 char *p;
 
 struct link *l;
-int live_nodes;
 
 struct link *ll_new() {
-  // In this case, we'll say that we have to allocate a page.
-  if (base == 0) {
-    if ((base = kalloc()) == 0) {
-      // Allocation failed.
-      return 0;
-    }
-
-    p = base;
-  }
-
   if (p + sizeof(struct link) > base + PGSIZE) {
     return 0;
   }
 
   struct link *ret = (struct link *)p;
   p += sizeof(struct link);
-  live_nodes++;
   return ret;
 }
 
-void ll_create() { l = ll_new(); }
+void ll_create() { l = 0; base = kalloc(); p = base; }
 
 int ll_push(int value) {
   struct link *new = ll_new();
   if (new == 0) {
     return -1;
+  }
+
+  if (l == 0) {
+    l = new;
   }
 
   struct link *end;
@@ -71,4 +63,4 @@ int ll_pop(void) {
   return old->value;
 }
 
-void ll_destroy(void) { kfree(base); }
+void ll_destroy(void) { kfree(base); base = 0; p = 0; }
