@@ -57,9 +57,8 @@ int ll_pop(void) {
 
   struct link *old = l;
   l = l->next;
-  // TODO: the bug is here! we set the next pointer of the *current*
-  // l to 0 after changing it.
-  /* l->next = 0; */
+  // Now let's clean up and make it harder to misuse.
+  l->next = 0;
   return old->value;
 }
 
