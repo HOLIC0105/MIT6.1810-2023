@@ -68,9 +68,15 @@ void (*tests[])(void) = {
 
 int main() {
   for (int i = 0; i < sizeof(tests) / sizeof(*tests); i++) {
-    ll_create();
+    if (ll_create()) {
+      fprintf(2, "ll_create failed on test %d\n", i);
+      exit(1);
+    }
     tests[i]();
-    ll_destroy();
+    if (ll_destroy()) {
+      fprintf(2, "ll_destroy failed on test %d\n", i);
+      exit(1);
+    }
   }
 
   printf("ALL TESTS PASSED\n");
