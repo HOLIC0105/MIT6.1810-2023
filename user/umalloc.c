@@ -27,9 +27,11 @@ free(void *ap)
   Header *bp, *p;
 
   bp = (Header*)ap - 1;
+  //bp between (p, p->s.ptr), find p 
   for(p = freep; !(bp > p && bp < p->s.ptr); p = p->s.ptr)
     if(p >= p->s.ptr && (bp > p || bp < p->s.ptr))
       break;
+  //coalesce free block
   if(bp + bp->s.size == p->s.ptr){
     bp->s.size += p->s.ptr->s.size;
     bp->s.ptr = p->s.ptr->s.ptr;
