@@ -5,11 +5,11 @@
 #include "kernel/fcntl.h"
 
 // Parsed command representation
-#define EXEC  1
-#define REDIR 2
-#define PIPE  3
-#define LIST  4
-#define BACK  5
+#define EXEC  1 //基本命令
+#define REDIR 2 //重定向命令 <, >
+#define PIPE  3 //管道命令 |
+#define LIST  4 //列表命令 ;
+#define BACK  5 //背景命令 &
 
 #define MAXARGS 10
 
@@ -21,7 +21,7 @@ struct execcmd {
   int type;
   char *argv[MAXARGS];
   char *eargv[MAXARGS];
-};
+}; //基本命令类
 
 struct redircmd {
   int type;
@@ -30,24 +30,24 @@ struct redircmd {
   char *efile;
   int mode;
   int fd;
-};
+}; //重定向命令类 
 
 struct pipecmd {
   int type;
   struct cmd *left;
   struct cmd *right;
-};
+}; //管道命令类
 
 struct listcmd {
   int type;
   struct cmd *left;
   struct cmd *right;
-};
+}; //列表命令类
 
 struct backcmd {
   int type;
   struct cmd *cmd;
-};
+}; //背景命令类
 
 int fork1(void);  // Fork but panics on failure.
 void panic(char*);
@@ -291,7 +291,7 @@ gettoken(char **ps, char *es, char **q, char **eq)
     if(*s == '>'){
       ret = '+';
       s++;
-    }
+    } // 重定向 >> 操作,意为追加
     break;
   default:
     ret = 'a';
