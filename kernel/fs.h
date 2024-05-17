@@ -51,10 +51,10 @@ struct dinode {
 #define BBLOCK(b, sb) ((b)/BPB + sb.bmapstart)
 
 // Directory is a file containing a sequence of dirent structures.
-#define DIRSIZ 14
+#define DIRSIZ 14     //目录长度限制
 
 struct dirent {
-  ushort inum;
-  char name[DIRSIZ];
-};
+  ushort inum;        //inode编号
+  char name[DIRSIZ];  //文件名
+}; //目录项结构
 
