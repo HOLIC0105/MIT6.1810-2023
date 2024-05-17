@@ -11,6 +11,10 @@ int readline(int fd, char *buf) {
     while(read(fd, p, 1) > 0) {
         len ++;
         if(*p == '\n') break;
+        if(len == MAXLINE) {
+            fprintf(2, "xargs : more than 1024 Bytes in one line");
+            exit(1);
+        }
         p ++;
     }
     return len;        
@@ -33,6 +37,10 @@ main(int argc, char *argv[])
         for(int i = 0; i < len; i ++) {
             while(i != len && strchr(whitespace, buf[i])) i ++;
             if(i != len) {
+                if(execargc == MAXARG) {
+                    fprintf(2, "xargs : much more arguments then 32");
+                    exit(1);
+                }
                 execargv[execargc ++] = buf + i;
                 while(i != len && !strchr(whitespace, buf[i])) i ++;
                 buf[i] = 0;
