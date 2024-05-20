@@ -57,7 +57,7 @@ int
 main(int argc, char const *argv[])
 {
     if(argc != 3){
-        fprintf(2, "Usage: find path... files...\n");
+        fprintf(2, "Usage: find path files\n");
         exit(1);
     }
     find(argv[1], argv[2]);

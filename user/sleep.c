@@ -6,7 +6,7 @@ int
 main(int argc, char const *argv[])
 {
     if(argc != 2) {
-        fprintf(2, "Usage: sleep ticks...\n");
+        fprintf(2, "Usage: sleep ticks\n");
         exit(1);
     }
     sleep(atoi(argv[1]));
