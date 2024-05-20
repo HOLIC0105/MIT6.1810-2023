@@ -177,9 +177,11 @@ main(int argc, char const *argv[])
         fprintf(2, "cannot cd %s\n", buf+3);
       continue;
     }
+    struct cmd *curcmd = parsecmd(buf);
     if(fork1() == 0)
-      runcmd(parsecmd(buf));
-    wait(0);
+      runcmd(curcmd);
+    if(curcmd->type != BACK)
+      wait(0);
   }
   exit(0);
 }
