@@ -3,6 +3,7 @@
 #include "kernel/types.h"
 #include "user/user.h"
 #include "kernel/fcntl.h"
+#include "kernel/stat.h"
 
 // Parsed command representation
 #define EXEC  1 //基本命令
@@ -76,9 +77,6 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit(1);
-    if(strcmp(ecmd->argv[0], "sh") == 0) {
-      ecmd->argv[1] = "1";
-    }
     exec(ecmd->argv[0], ecmd->argv);
     fprintf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
@@ -135,9 +133,20 @@ runcmd(struct cmd *cmd)
 }
 
 int
-getcmd(int ingnoreInputTag, char *buf, int nbuf)
+isatty(int fd) {
+  struct stat st;
+  if (fstat(fd, &st) < 0)
+  {
+    fprintf(2, "fstat: failed to stat\n");
+    exit(1);
+  }
+  return st.type == T_DEVICE && st.dev == 1;
+}
+
+int
+getcmd(char *buf, int nbuf)
 {
-  if(!ingnoreInputTag) 
+  if(isatty(0))
     fprintf(2, "$ ", 2);
   memset(buf, 0, nbuf);
   gets(buf, nbuf);
@@ -151,8 +160,6 @@ main(int argc, char const *argv[])
 {
   static char buf[100];
   int fd;
-  int ignoreInputTag = 0;
-  if(argc == 2) ignoreInputTag = atoi(argv[1]);
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
     if(fd >= 3){
@@ -162,7 +169,7 @@ main(int argc, char const *argv[])
   }
 
   // Read and run input commands.
-  while(getcmd(ignoreInputTag, buf, sizeof(buf)) >= 0){
+  while(getcmd(buf, sizeof(buf)) >= 0){
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
