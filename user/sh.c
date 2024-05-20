@@ -76,6 +76,9 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd*)cmd;
     if(ecmd->argv[0] == 0)
       exit(1);
+    if(strcmp(ecmd->argv[0], "sh") == 0) {
+      ecmd->argv[1] = "1";
+    }
     exec(ecmd->argv[0], ecmd->argv);
     fprintf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
@@ -132,9 +135,10 @@ runcmd(struct cmd *cmd)
 }
 
 int
-getcmd(char *buf, int nbuf)
+getcmd(int ingnoreInputTag, char *buf, int nbuf)
 {
-  write(2, "$ ", 2);
+  if(!ingnoreInputTag) 
+    fprintf(2, "$ ", 2);
   memset(buf, 0, nbuf);
   gets(buf, nbuf);
   if(buf[0] == 0) // EOF
@@ -143,11 +147,12 @@ getcmd(char *buf, int nbuf)
 }
 
 int
-main(void)
+main(int argc, char const *argv[])
 {
   static char buf[100];
   int fd;
-
+  int ignoreInputTag = 0;
+  if(argc == 2) ignoreInputTag = atoi(argv[1]);
   // Ensure that three file descriptors are open.
   while((fd = open("console", O_RDWR)) >= 0){
     if(fd >= 3){
@@ -157,7 +162,7 @@ main(void)
   }
 
   // Read and run input commands.
-  while(getcmd(buf, sizeof(buf)) >= 0){
+  while(getcmd(ignoreInputTag, buf, sizeof(buf)) >= 0){
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
