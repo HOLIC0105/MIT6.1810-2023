@@ -178,10 +178,12 @@ main(int argc, char const *argv[])
       continue;
     }
     struct cmd *curcmd = parsecmd(buf);
-    if(fork1() == 0)
+    int pid;
+    if((pid = fork1()) == 0)
       runcmd(curcmd);
-    if(curcmd->type != BACK)
-      wait(0);
+    if(curcmd->type != BACK) {
+      while(wait(0) != pid); 
+    }
   }
   exit(0);
 }
