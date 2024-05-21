@@ -174,6 +174,13 @@ main(int argc, char const *argv[])
       if(chdir(buf+3) < 0)
         fprintf(2, "cannot cd %s\n", buf+3);
       continue;
+    } else if(buf[0] == 'w' && buf[1] == 'a' && buf[2] == 'i' && buf[3] == 't') {
+      buf[strlen(buf) - 1] = 0;
+      int pid = 0, status;
+      while((pid = wait(&status)) != -1) {
+        fprintf(0, "pid = %d, status = %d\n", pid, status);
+      }
+      continue;
     }
     struct cmd *curcmd = parsecmd(buf);
     int pid;
