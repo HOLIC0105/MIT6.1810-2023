@@ -21,7 +21,10 @@ find(const char *path, const char *filename) {
         close(fd);
         exit(1); 
     }   
-    if(st.type != T_DIR) return;
+    if(st.type != T_DIR) {
+        fprintf(2, "Usage: find <directory> <files>\n");
+        exit(1);
+    }
     if(strlen(path) + 1 + DIRSIZ + 1 > sizeof(buf)) {
         printf("fd: path too long\n");
         exit(1);
@@ -53,13 +56,14 @@ find(const char *path, const char *filename) {
             break;
         }
     }
+    close(fd);
 }
 
 int
 main(int argc, char const *argv[])
 {
     if(argc != 3){
-        fprintf(2, "Usage: find <path> <files>\n");
+        fprintf(2, "Usage: find <directory> <files>\n");
         exit(1);
     }
     find(argv[1], argv[2]);
